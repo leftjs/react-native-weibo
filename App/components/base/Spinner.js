@@ -1,0 +1,24 @@
+/**
+ * Created by jason on 3/2/16.
+ */
+import React,{
+	ActivityIndicatorIOS,
+	ProgressBarAndroid,
+	Component,
+	PropTypes,
+	Platform
+} from 'react-native'
+
+
+class Spinner extends Component{
+	render(){
+		if (Platform.OS === 'android'){
+			return (
+				<ProgressBarAndroid {...this.props} />
+			)
+		}
+		return (
+			<ActivityIndicatorIOS animating={true} {...this.props} />
+		)
+	}
+}
