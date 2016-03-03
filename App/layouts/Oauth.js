@@ -7,12 +7,14 @@ import React,{
 	Text,
 	WebView,
 	PropTypes,
-	Dimensions
+	Dimensions,
+	StyleSheet
 } from 'react-native'
 
 import config from '../configs'
 import qs from 'query-string'
 import connectComponent from '../utils/connectComponent'
+import Spinner from '../components/base/Spinner'
 
 const { width, height } = Dimensions.get('window')
 
@@ -23,6 +25,7 @@ class Oauth extends Component {
     super(props);
     // 初始状态
     this.state = {
+	    hidden: false
     };
   }
 
@@ -30,22 +33,40 @@ class Oauth extends Component {
 	}
 
 	navigationChange(navState){
-		console.log(navState)
 		let url = navState.url
 		let regex = 'code='
 		let start = url.indexOf(regex)
 		if(start > -1 && navState.loading){
 			let code = url.substring(start + regex.length,url.length)
+			this.hidden = true
+			this.props.router.toHome()
 			this.props.actions.getAccessToken(code)
 		}
 	}
 
+	_onShouldStartLoadWithRequest(nav){
+		if (this.hidden) {
+			return false
+		}
+		return true
+	}
 
 
-	render(){
+	_renderSpinner(){
 		return (
-			<View>
-				<WebView
+			<Spinner
+				size="small"
+				style={styles.loading}
+			></Spinner>
+		)
+	}
+
+
+	_renderWebView(){
+
+		return (
+
+			<WebView
 				ref={webview => this.webview = webview}
 				source={{uri: config.domain + `/oauth2/authorize?client_id=${config.appKey}&redirect_uri=${config.callback}`}}
 				automaticallyAdjustContentInsets={false}
@@ -53,15 +74,32 @@ class Oauth extends Component {
 				style={{width: width, height: height}}
 				contentInset={{top:0, bottom:0, left: 0, right: 0}}
 				onNavigationStateChange={this.navigationChange.bind(this)}
-				>
-				</WebView>
-			</View>
+				onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest}
+			>
+			</WebView>
+
 		)
+
 	}
+
+	render(){
+		return (
+		<View>
+			{this._renderWebView()}
+		</View>
+		)
+		}
+
 }
 
+const styles = StyleSheet.create({
+	loading: {
+		marginTop: 20
+	}
+})
+
 export const LayoutComponent = Oauth
-export function mapStateToProps(state) {
+export function mapStateToProps(state,props) {
 	return{
 
 	}

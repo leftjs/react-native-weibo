@@ -8,7 +8,7 @@ import React,{
 import _ from 'lodash'
 import connectComponent from '../utils/connectComponent'
 import * as CustomSceneConfigs from '../configs/sceneConfig';
-
+import * as Home from '../layouts/Home'
 class Router {
 	// 构造
   constructor(props) {
@@ -23,11 +23,20 @@ class Router {
 		route.sceneConfig = route.sceneConfig ? route.sceneConfig : CustomSceneConfigs.customFloatFromRight
 		route.id = _.uniqueId()
 		route.component = connectComponent(route.component)
-		this.navigator
+		this.navigator.push(route)
 	}
 
 	pop(){
 		this.navigator.pop()
+	}
+
+	toHome(props) {
+		this.push(props, {
+			component: Home,
+			name: 'Home',
+			sceneConfig: CustomSceneConfigs.customFloatFromRight
+
+		})
 	}
 }
 

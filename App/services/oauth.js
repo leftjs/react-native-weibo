@@ -4,6 +4,7 @@
 import * as requestService from './request'
 import config from '../configs'
 import qs from 'query-string'
+import { getToken, setToken} from './token'
 
 
 export const req = {
@@ -19,6 +20,7 @@ export const req = {
 
 		return requestService.post(`/oauth2/access_token?client_id=${body.client_id}&client_secret=${body.client_secret}&redirect_uri=${body.grant_type.redirect_uri}&code=${body.grant_type.code}`,null).then(token =>{
 			if(token) {
+				setToken(token)
 				return token
 			}else {
 				throw 'getAccessTokenFail'
